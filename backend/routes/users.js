@@ -10,16 +10,8 @@ router.get('/', async function(req, res, next) {
   const user = await User.findOne({username:username})
   console.log(user)
   res.send(user);
-  // res.send('respond with a resource');
 
 });
-
-// router.get('/:username', async function(req, res, next) {
-//   const {username} = req.params
-//   const user = await User.findOne({username:username})
-//   console.log(":uname")
-//   res.send(user);
-// });
 
 router.post("/", async(req,res,next)=>{
   try {
