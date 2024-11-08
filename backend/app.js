@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require("mongoose")
+var cors = require("cors")
 var passport = require("passport")
 var session = require("express-session")
 const dotenv = require("dotenv").config()
@@ -17,10 +18,12 @@ var app = express();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors( {origin: process.env.FRONTEND_URI,credentials:true}))
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect("mongodb://localhost:27017/meme-generator")
+mongoose.connect(process.env.MONGODB_URI)
+
 // .then(()=>{
 // })
 
@@ -42,14 +45,14 @@ app.use(passport.session());
 app.post("/api/auth",
   passport.authenticate("local"),
   (req,res) =>{
-    
-    res.sendStatus(200)
+
+    res.status(200).json({username: req.user.username, userId:req.user._id})
   }
 )
 
 app.get("/api/auth/status",
   (req,res) =>{
-    if(req.user) return res.send({username:req.user.username, credits:req.user.credits});
+    if(req.user) return res.status(200).send({username:req.user.username, credits:req.user.credits});
 
     return res.sendStatus(401);
   }
