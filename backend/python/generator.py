@@ -9,7 +9,7 @@ def generate_image(text):
     draw.text((10, 40), text, fill="black")
 
     unique_filename = f"{uuid.uuid4()}.png"
-    temp_image_path = f"python/tmp/{unique_filename}"
+    temp_image_path = f"images/tmp/{unique_filename}"
     
     image.save(temp_image_path)
     return temp_image_path

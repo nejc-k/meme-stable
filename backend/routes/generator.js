@@ -5,15 +5,12 @@ const User = require("../models/User")
 const { spawn } = require('child_process');
 
 
-const fs = require('fs');
-const path = require('path');
-
 router.post("/", async (req, res, next) => {
     try {
         const prompt = req.body.prompt;
 
         const pyProg = spawn('python3', ['python/generator.py', prompt]);
-        let imagePath = '';
+        let imagePath = `${process.env.API_BASE_URI}:${process.env.PORT}/`;
 
         pyProg.stdout.on('data', (data) => {
             imagePath += data.toString().trim();
@@ -21,11 +18,8 @@ router.post("/", async (req, res, next) => {
 
         pyProg.on('close', (code) => {
             if (code === 0 && imagePath) {
-                const imageBuffer = fs.readFileSync(imagePath);
-                res.setHeader('Content-Type', 'image/png');
-                res.send(imageBuffer);
+                res.send({imgUrl: imagePath})
 
-                // fs.unlinkSync(imagePath);
             } else {
                 res.status(500).json({ message: "Image generation failed" });
             }
