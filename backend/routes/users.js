@@ -32,7 +32,8 @@ router.post("/", async(req,res,next)=>{
           {
             username:req.body.username,
             password:hash,
-            credits:10
+            credits:10,
+            isAdmin:false,
           }
 
         )
