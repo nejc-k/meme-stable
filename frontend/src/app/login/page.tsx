@@ -6,6 +6,8 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useAuth} from "@/context/AuthContext";
+import {useEffect} from "react";
 
 const schema = z.object({
     email: z.string().email(),
@@ -13,6 +15,7 @@ const schema = z.object({
 });
 
 export default function LoginPage() {
+    const {login} = useAuth();
     const form = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -21,8 +24,9 @@ export default function LoginPage() {
         }
     });
 
-    function onSubmit() {
-        // TODO: Implement login logic
+    async function onSubmit() {
+        const {email, password} = form.getValues();
+        await login(email, password);   // Method automatically redirects to images page
     }
 
     return (

@@ -3,6 +3,7 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {AuthContextType, User} from "@/types/auth";
 import {useRouter} from "next/navigation";
+import axios from "axios";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -28,23 +29,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     /**
      * @description Self explanatory
-     * @param {string} token - Auth token
-     * @param {User} userData - User data
-     * @returns void
+     * @param {string} email - User email
+     * @param {string} password - User password
+     * @returns Promise<void>
      * */
-    const login = (token: string, userData: User) => {
+    const login = async (email: string, password: string) => {
+        console.log("Logging in with email:", email, "and password:", password);
+
+        // TODO: Uncomment before production
+        // const response = await axios.post('/api/auth/login', {email, password});
+        // const {token, userData} = response.data;
+
+        const token = "fake-token";
+        const userData = {
+            id: "1",
+            name: "John",
+            lastname: "Doe",
+            username: "fake-username",
+            email: "john.doe@email.com",
+            tokens: 10
+        }
+
         setToken(token);
         setUser(userData);
         sessionStorage.setItem('auth-token', token);
         sessionStorage.setItem('auth-user', JSON.stringify(userData));
+
+        // TODO: Remove before production
+        if (process.env.NODE_ENV === "development") {
+            document.cookie = `auth-token=${token}; expires=7; sameSite=Strict`;
+            console.log("Created cookie with token:", token);
+        }
+
         router.push('/images');
     }
 
     /**
      * @description Self explanatory
-     * @returns void
+     * @returns Promise<void>
      * */
-    const logout = () => {
+    const logout = async () => {
+        // TODO: Uncomment before production
+        if (process.env.NODE_ENV === "production") {
+            const response = await axios.post('/api/auth/logout');
+        }
+
         setToken(null);
         setUser(null);
         sessionStorage.removeItem('auth-token');
@@ -55,32 +84,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
     /**
      * @description Create new backend call to create new account
      * @param {User} userData - User data
-     * @returns void
+     * @param {string} password - User password
+     * @returns Promise<void>
      * */
-    const createAccount = (userData: User) => {
+    const createAccount = async (userData: User, password: string) => {
+        // TODO: Uncomment before production
+        if (process.env.NODE_ENV === "production") {
+            const response = await axios.post('/api/auth/register', {...userData, password});
+            if (response.status === 201) {
+                await login(userData.email, password);
+            }
+            return;
 
+        } else {
+            await login(userData.email, password);
+        }
     }
 
     /**
      * @description Create new backend call to update account
      * @param {User} userData - User data
-     * @returns void
+     * @returns Promise<void>
      * */
-    const updateAccount = (userData: User) => {
-
+    const updateAccount = async (userData: User) => {
+        const response = await axios.put('/api/auth/' + userData.id, userData);
     }
 
     /**
      * @description Create new backend call to delete account
      * @param {User} userData - User data
-     * @returns void
+     * @returns Promise<void>
      * */
-    const deleteAccount = (userData: User) => {
+    const deleteAccount = async (userData: User) => {
+        const response = await axios.delete('/api/auth/' + userData.id);
+    }
 
+    /**
+     * @description Create new backend call to update password
+     * @param {string} newPassword - New password
+     * @returns Promise<void>
+     * */
+    const updatePassword = async (newPassword: string) => {
+        const response = await axios.delete('/api/auth/' + newPassword);
     }
 
     return (
-        <AuthContext.Provider value={{user, token, login, logout, createAccount, updateAccount, deleteAccount}}>
+        <AuthContext.Provider
+            value={{user, token, login, logout, createAccount, updateAccount, deleteAccount, updatePassword}}>
             {children}
         </AuthContext.Provider>
     );

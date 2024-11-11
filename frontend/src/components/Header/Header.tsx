@@ -1,32 +1,55 @@
+"use client";
+
+import {useAuth} from "@/context/AuthContext";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
+
 export default function Header() {
+    const {user} = useAuth();
+
     return (
         <header className="grid grid-cols-4 items-center px-12 py-8 mb-12">
             <h1 className="text-2xl text-black">MemeGen</h1>
             <nav className="col-span-2 mx-auto h-fit">
                 <ul className="flex justify-center align-center gap-12">
                     <li className="inline-block">
-                        <a href="/" className="text-black">Home</a>
+                        <Link href="/" className="text-black">Home</Link>
                     </li>
                     <li className="inline-block">
-                        <a href="/generator/create" className="text-black">Create</a>
+                        <Link href="/generator/create" className="text-black">Create</Link>
                     </li>
                     <li className="inline-block">
-                        <a href="/images" className="text-black">Images</a>
+                        <Link href="/images" className="text-black">Images</Link>
                     </li>
                 </ul>
             </nav>
             <div className="flex justify-end items-center gap-12">
-                <div className="px-4 py-2 bg-gray-200 rounded-md">
-                    <span className="text-black">
-                        Tokens
-                        <img src="/tokens.svg" alt="Tokens SVG" className="inline-block ml-2"/>
-                    </span>
-                    <span className="block text-gray-500">10 left</span>
-                </div>
-                <a href="/profile" className="rounded-full bg-gray-200 w-10 h-10 text-center">
-                    {/*<img src="" alt="GU"/>*/}
-                    <span className="text-black mt-2 inline-block">GU</span>
-                </a>
+                {user ? (
+                    <>
+                        <div className="px-4 py-2 bg-gray-200 rounded-md">
+                            <span className="text-black">
+                                Tokens
+                                <img src="/tokens.svg" alt="Tokens SVG" className="inline-block ml-2"/>
+                            </span>
+                            <span className="block text-gray-500">{user.tokens} left</span>
+                        </div>
+                        <Link href="/profile" className="rounded-full bg-gray-200 w-12 h-12 text-center">
+                            <span className="text-black mt-3 inline-block text-xl">
+                                {user.name.charAt(0).toUpperCase()}
+                                {user.lastname.charAt(0).toUpperCase()}
+                            </span>
+                        </Link>
+                    </>
+                ) : (
+                    <>
+                        <Link href="/login">
+                            <Button className="bg-gray-700">Login</Button>
+                        </Link>
+                        <Link href="/register">
+                            <Button className="bg-gray-900">Sign up</Button>
+                        </Link>
+                    </>
+                )}
             </div>
         </header>
     );

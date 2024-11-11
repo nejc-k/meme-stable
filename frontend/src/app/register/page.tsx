@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Switch} from "@/components/ui/switch";
+import {useAuth} from "@/context/AuthContext";
 
 const schema = z.object({
     username: z.string().min(3, {message: "Username must be at least 3 characters"}).max(255, {message: "Username must be less than 255 characters"}),
@@ -14,11 +15,12 @@ const schema = z.object({
     lastname: z.string().min(3, {message: "Last name must be at least 3 characters"}).max(255, {message: "Last name must be less than 255 characters"}),
     email: z.string().email(),
     password: z.string().min(8, {message: "Password must be at least 8 characters"}),
-    confirmPassword: z.string().min(8, {message: "Password must be at least 8 characters"}),
+    "confirm-password": z.string().min(8, {message: "Password must be at least 8 characters"}),
     terms: z.boolean().and(z.boolean().refine(value => value, {message: "You must agree to the terms and conditions"})),
 });
 
 export default function RegisterPage() {
+    const {createAccount} = useAuth();
     const form = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -32,8 +34,17 @@ export default function RegisterPage() {
         }
     });
 
-    function onSubmit() {
-        // TODO: Implement register logic
+    async function onSubmit() {
+        await createAccount({
+                id: "",
+                username: form.getValues('username'),
+                name: form.getValues('name'),
+                lastname: form.getValues('lastname'),
+                email: form.getValues('email'),
+                tokens: 0
+            },
+            form.getValues('password')
+        );
     }
 
     return (
@@ -83,7 +94,7 @@ export default function RegisterPage() {
                             </FormControl>
                         </FormItem>
                     )}/>
-                    <FormField name="confirmPassword" render={({field}) => (
+                    <FormField name="confirm-password" render={({field}) => (
                         <FormItem>
                             <FormLabel>Confirm password</FormLabel>
                             <FormControl>

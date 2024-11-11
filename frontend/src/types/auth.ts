@@ -1,11 +1,12 @@
 export interface AuthContextType {
     user: User | null;
     token: string | null;
-    login: (token: string, userData: User) => void;
-    logout: () => void;
-    createAccount: (userData: User) => void;
-    updateAccount: (userData: User) => void;
-    deleteAccount: (userData: User) => void;
+    login: (email: string, password: string) => Promise<void>;
+    logout: () => Promise<void>;
+    createAccount: (userData: User, password: string) => Promise<void>;
+    updateAccount: (userData: User) => Promise<void>;
+    deleteAccount: (userData: User) => Promise<void>;
+    updatePassword: (newPassword: string) => Promise<void>;
 }
 
 export interface User {
@@ -14,4 +15,5 @@ export interface User {
     lastname: string;
     username: string;
     email: string;
+    tokens: number;
 }

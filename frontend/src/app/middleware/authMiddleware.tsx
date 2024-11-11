@@ -2,7 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 
 export function authMiddleware(request: NextRequest) {
     // TODO: Check token name when backend is ready
-    const token = request.cookies.get("token");
+    const token = request.cookies.get("auth-token");
     const protectedRoutes = [
         "/generator",
         "/generator/*",
