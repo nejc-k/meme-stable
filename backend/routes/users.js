@@ -10,20 +10,12 @@ router.get('/', async function(req, res, next) {
   const user = await User.findOne({username:username})
   console.log(user)
   res.send(user);
-  // res.send('respond with a resource');
 
 });
 
-// router.get('/:username', async function(req, res, next) {
-//   const {username} = req.params
-//   const user = await User.findOne({username:username})
-//   console.log(":uname")
-//   res.send(user);
-// });
-
 router.post("/", async(req,res,next)=>{
   try {
-    const user = User.findOne({username: req.body.username})
+    const user = await User.findOne({username: req.body.username})
     if(user) return res.status(400).json({message: "User with this username already exists"});
 
     bcrypt.genSalt(10, (err,salt) =>{
@@ -40,7 +32,8 @@ router.post("/", async(req,res,next)=>{
           {
             username:req.body.username,
             password:hash,
-            credits:10
+            credits:10,
+            isAdmin:false,
           }
 
         )
