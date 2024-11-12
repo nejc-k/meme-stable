@@ -41,7 +41,7 @@ export default function RegisterPage() {
                 name: form.getValues('name'),
                 lastname: form.getValues('lastname'),
                 email: form.getValues('email'),
-                tokens: 0
+                credits: 0
             },
             form.getValues('password')
         );

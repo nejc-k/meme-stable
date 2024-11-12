@@ -1,8 +1,8 @@
 import {NextRequest, NextResponse} from "next/server";
 
 export function authMiddleware(request: NextRequest) {
-    // TODO: Check token name when backend is ready
-    const token = request.cookies.get("auth-token");
+    // connect.sid is the cookie name for the session of the node.js passport
+    const token = request.cookies.get("connect.sid");
     const protectedRoutes = [
         "/generator",
         "/generator/*",

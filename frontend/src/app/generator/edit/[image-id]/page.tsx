@@ -7,7 +7,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {Switch} from "@/components/ui/switch";
 import {useState, useRef, useEffect, ChangeEvent} from "react";
-import {useSearchParams} from "next/navigation";
+import {useParams, useSearchParams} from "next/navigation";
 import {TextBox} from "@/types/generator";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -20,25 +20,41 @@ import {
     AlignStartHorizontal,
     Trash2
 } from "lucide-react";
+import {useAuth} from "@/context/AuthContext";
 
 const schema = z.object({
-    "meme-text": z.string().min(1, {message: "Text must be at least 1 character"}),
-    "select-font": z.string().min(1, {message: "Font must be selected"}),
-    "font-size": z.string().min(1, {message: "Smallest font size is 1"}).max(72, {message: "Largest font size is 72"}),
+    "meme-text": z.string()
+        .min(1, {message: "Text must be at least 1 character"}),
+    "select-font": z.string()
+        .min(1, {message: "Font must be selected"}),
+    "font-size": z.string()
+        .min(1, {message: "Smallest font size is 1"})
+        .max(72, {message: "Largest font size is 72"}),
     "font-color": z.string(),
     "toggle-white-box": z.boolean(),
-    "white-box-padding": z.string().min(0, {message: "Smallest padding is 0"}).max(50, {message: "Largest padding is 50"}).optional(),
+    "white-box-padding": z.string()
+        .min(0, {message: "Smallest padding is 0"})
+        .max(50, {message: "Largest padding is 50"})
+        .optional(),
     "toggle-sidebars": z.boolean(),
-    "sidebars-width": z.string().min(0, {message: "Smallest width is 0"}).max(256, {message: "Largest width is 256"}).optional(),
+    "sidebars-width": z.string()
+        .min(0, {message: "Smallest width is 0"})
+        .max(256, {message: "Largest width is 256"})
+        .optional(),
 });
 
 const CANVAS_WIDTH = 512;
 const CANVAS_HEIGHT = 512;
 
 export default function GeneratorEditPage() {
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [selectedTextBox, setSelectedTextBox] = useState<number | null>(null);
     const [textBoxes, setTextBoxes] = useState<Array<TextBox>>([]);
+
+    const {user} = useAuth();
+    const searchParams = useSearchParams();
+    const params = useParams();
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const form = useForm({
@@ -56,14 +72,31 @@ export default function GeneratorEditPage() {
     });
 
     useEffect(() => {
-        renderCanvas();
-    }, [textBoxes, selectedTextBox]);
+        console.log("Image src: ", imageSrc);
+    }, [imageSrc]);
 
     useEffect(() => {
-        // Additional re-render to remove the red border around the text box
-        if (!isDragging)
-            renderCanvas();
-    }, [isDragging]);
+        // const imageId = searchParams.get('image-id');
+        const imageId = params['image-id'];
+
+        console.log("User: ", user);
+        console.log("Image ID: ", imageId);
+
+        if (user && imageId) {
+            const newImageSrc = `${process.env.NEXT_PUBLIC_API_IMAGES_URL}/${user._id}/${imageId}.png`;
+            setImageSrc(newImageSrc);
+        }
+    }, [user]);
+
+    useEffect(() => {
+        renderCanvas();
+    }, [textBoxes, selectedTextBox, imageSrc]);
+
+    // useEffect(() => {
+    //     // Additional re-render to remove the red border around the text box
+    //     if (!isDragging)
+    //         renderCanvas();
+    // }, [isDragging]);
 
     useEffect(() => {
         if (isDragging) {
@@ -79,13 +112,6 @@ export default function GeneratorEditPage() {
             document.removeEventListener("mouseup", handleMouseUp);
         };
     }, [isDragging, selectedTextBox]);
-
-    // TODO: Check if there is method to store image locally (e.g. in React Context, Cache) to reduce the number of requests to the server
-    const searchParams = useSearchParams();
-    const imageId = searchParams.get('imageId');
-    const imageSrc = process.env.NODE_ENV === 'development' ?
-        '/images/placeholder-meme.png' :
-        `/api/images/${imageId}`
 
     /**
      * @description Adds a new text box to the canvas
@@ -132,8 +158,11 @@ export default function GeneratorEditPage() {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        if (!imageSrc) return;
+
         const image = new Image();
         image.src = imageSrc;
+        image.crossOrigin = "anonymous";
         image.onload = () => {
             canvas.width = CANVAS_WIDTH;
             canvas.height = CANVAS_HEIGHT;
@@ -302,7 +331,7 @@ export default function GeneratorEditPage() {
         link.click();
     }
 
-    return (
+    return imageSrc ? (
         <section id="create-page" className="max-w-screen-xl mx-auto relative">
             <aside className="bg-white rounded-lg p-6 w-80 flex flex-col gap-6 absolute left-0 shadow-lg">
                 <Form {...form}>
@@ -328,6 +357,8 @@ export default function GeneratorEditPage() {
                                             <SelectItem value="arial">Arial</SelectItem>
                                             <SelectItem value="times">Times</SelectItem>
                                             <SelectItem value="courier">Courier</SelectItem>
+                                            <SelectItem value="Comic Sans MS">Comic Sans</SelectItem>
+                                            <SelectItem value="Impact">Impact</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </FormControl>
@@ -405,38 +436,39 @@ export default function GeneratorEditPage() {
                 <div className="bg-white rounded-lg shadow-lg p-4 flex justify-between">
                     <div className="flex justify-between gap-4">
                         <Button type="button" onClick={() => alignTextHorizontally("left")}
-                                className="bg-gray-300 text-black">
+                                className="bg-gray-300 text-black hover:text-white">
                             <AlignLeft/>
                         </Button>
                         <Button type="button" onClick={() => alignTextHorizontally("center")}
-                                className="bg-gray-300 text-black">
+                                className="bg-gray-300 text-black hover:text-white">
                             <AlignCenter/>
                         </Button>
                         <Button type="button" onClick={() => alignTextHorizontally("right")}
-                                className="bg-gray-300 text-black">
+                                className="bg-gray-300 text-black hover:text-white">
                             <AlignRight/>
                         </Button>
                     </div>
                     <div className="flex justify-between gap-4">
                         <Button type="button" onClick={() => alignTextVertically("start")}
-                                className="bg-gray-300 text-black">
+                                className="bg-gray-300 text-black hover:text-white">
                             <AlignStartHorizontal/>
                         </Button>
                         <Button type="button" onClick={() => alignTextVertically("center")}
-                                className="bg-gray-300 text-black">
+                                className="bg-gray-300 text-black hover:text-white">
                             <AlignCenterHorizontal/>
                         </Button>
                         <Button type="button" onClick={() => alignTextVertically("end")}
-                                className="bg-gray-300 text-black">
+                                className="bg-gray-300 text-black hover:text-white">
                             <AlignEndHorizontal/>
                         </Button>
                     </div>
                 </div>
-                <canvas style={{background: `url(${imageSrc}) no-repeat center`, backgroundSize: '512px 512px'}}
-                        ref={canvasRef}
-                        width={CANVAS_WIDTH}
-                        height={CANVAS_HEIGHT}
-                        className="shadow-gray-400 shadow-lg"
+                <canvas
+                    style={{background: `url(${imageSrc}) no-repeat center`, backgroundSize: '512px 512px'}}
+                    ref={canvasRef}
+                    width={CANVAS_WIDTH}
+                    height={CANVAS_HEIGHT}
+                    className="shadow-gray-400 shadow-lg"
                 />
                 <div className="w-full mx-auto flex gap-6">
                     <Button type="button" onClick={downloadMeme} className="px-4 w-full bg-gray-900">Download</Button>
@@ -476,5 +508,5 @@ export default function GeneratorEditPage() {
                 </ul>
             </aside>
         </section>
-    );
+    ) : <h1>Loading image source</h1>;
 };

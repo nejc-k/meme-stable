@@ -8,10 +8,12 @@ import {Input} from "@/components/ui/input"
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {redirect} from "next/navigation";
+import {useAuth} from "@/context/AuthContext";
+import {api} from "@/lib/axios";
 
 const schema = z.object({
-    templateId: z.string(),
-    imagePrompt: z.string()
+    "template-id": z.string(),
+    "image-prompt": z.string()
         .min(3, {message: "Prompt must be at least 3 characters"})
         .max(255, {message: "Prompt must be less than 255 characters"}),
     text: z.string()
@@ -19,19 +21,31 @@ const schema = z.object({
 });
 
 export default function GeneratorCreatePage() {
-
+    const {user, updateUserCredits} = useAuth();
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: {
-            templateId: "",
-            imagePrompt: "",
+            "template-id": "",
+            "image-prompt": "",
             text: "",
         }
     });
 
-    function onSubmit(values: z.infer<typeof schema>) {
+    async function onSubmit(values: z.infer<typeof schema>) {
+        if (!user) return;
+
         console.log(values);
-        redirect("/generator/edit");
+        updateUserCredits(-1);
+
+        const response = await api.post('/generator', {prompt: values["image-prompt"]});
+        if (response.status !== 201) {
+            console.error("Error creating meme");
+            return;
+        }
+
+        console.dir(response);
+        const imageId = response.data.imgUrl.split('/').pop().split('.')[0];
+        redirect("/generator/edit/" + imageId);
     }
 
     return (
@@ -39,7 +53,7 @@ export default function GeneratorCreatePage() {
             <h1 className="text-center text-lg">Create a meme</h1>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5">
-                    <FormField control={form.control} name="templateId" render={({field}) => (
+                    <FormField control={form.control} name="template-id" render={({field}) => (
                         <FormItem>
                             <FormLabel>Template</FormLabel>
                             <FormControl>
@@ -56,11 +70,11 @@ export default function GeneratorCreatePage() {
                             </FormControl>
                         </FormItem>
                     )}/>
-                    <FormField control={form.control} name="imagePrompt" render={({field}) => (
+                    <FormField control={form.control} name="image-prompt" render={({field}) => (
                         <FormItem>
                             <FormLabel>Image prompt</FormLabel>
                             <FormControl>
-                                <Input placeholder="Image prompt" {...field}/>
+                                <Input className="bg-white" placeholder="Image prompt" {...field}/>
                             </FormControl>
                         </FormItem>
                     )}/>
@@ -68,7 +82,7 @@ export default function GeneratorCreatePage() {
                         <FormItem>
                             <FormLabel>Text</FormLabel>
                             <FormControl>
-                                <Input placeholder="Text" {...field}/>
+                                <Input className="bg-white" placeholder="Text" {...field}/>
                             </FormControl>
                         </FormItem>
                     )}/>

@@ -31,7 +31,7 @@ export default function Header() {
                                 Tokens
                                 <img src="/tokens.svg" alt="Tokens SVG" className="inline-block ml-2"/>
                             </span>
-                            <span className="block text-gray-500">{user.tokens} left</span>
+                            <span className="block text-gray-500">{user.credits} left</span>
                         </div>
                         <Link href="/profile" className="rounded-full bg-gray-200 w-12 h-12 text-center">
                             <span className="text-black mt-3 inline-block text-xl">

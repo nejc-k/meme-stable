@@ -7,11 +7,11 @@ import {Button} from "@/components/ui/button";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useAuth} from "@/context/AuthContext";
-import {useEffect} from "react";
 
 const schema = z.object({
-    email: z.string().email(),
-    password: z.string().min(8, {message: "Password must be at least 8 characters"}),
+    username: z.string(),
+    password: z.string()
+        .min(8, {message: "Password must be at least 8 characters"}),
 });
 
 export default function LoginPage() {
@@ -19,14 +19,14 @@ export default function LoginPage() {
     const form = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
-            email: "",
+            username: "",
             password: "",
         }
     });
 
     async function onSubmit() {
-        const {email, password} = form.getValues();
-        await login(email, password);   // Method automatically redirects to images page
+        const {username, password} = form.getValues();
+        await login(username, password);   // Method automatically redirects to images page
     }
 
     return (
@@ -34,11 +34,11 @@ export default function LoginPage() {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6 p-12">
                     <h1 className="text-2xl">Login</h1>
-                    <FormField name="email" render={({field}) => (
+                    <FormField name="username" render={({field}) => (
                         <FormItem>
-                            <FormLabel>Email</FormLabel>
+                            <FormLabel>Username</FormLabel>
                             <FormControl>
-                                <Input type="email" {...field}/>
+                                <Input {...field}/>
                             </FormControl>
                         </FormItem>
                     )}/>

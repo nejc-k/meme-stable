@@ -12,3 +12,9 @@ export interface TextBox {
         y: number;
     }
 }
+
+export interface Image {
+    _id: string;
+    url: string;
+    name: string;
+}
