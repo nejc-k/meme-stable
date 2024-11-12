@@ -3,11 +3,22 @@ const passport = require("passport");
 const passportLocal = require("passport-local");
 const User = require("../models/User");
 
-/*se kliče ob prijavi*/
+/**
+ * @description Serializes and deserializes the user object.
+ * @param {User} user - User object to serialize.
+ * @param {Function} done - Callback function.
+ * @returns {Function} - Callback function.
+ * */
 passport.serializeUser((user, done) => {
 	done(null, user.id);
 });
 
+/**
+ * @description Deserializes the user object.
+ * @param {String} id - User ID to deserialize.
+ * @param {Function} done - Callback function.
+ * @returns {Function} - Callback function.
+ * */
 passport.deserializeUser(async (id, done) => {
 	try {
 		const user = await User.findById(id);
@@ -21,6 +32,9 @@ passport.deserializeUser(async (id, done) => {
 
 });
 
+/**
+ * @description Local strategy for authenticating users.
+ * */
 passport.use(
 	// validira user
 	new passportLocal.Strategy(async (username, passwordAttempt, done) => {

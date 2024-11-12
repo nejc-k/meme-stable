@@ -24,7 +24,11 @@ export default function LoginPage() {
         }
     });
 
-    async function onSubmit() {
+    /**
+     * @description Handles form submission for logging in
+     * @returns {Promise<void>}
+     * */
+    async function onSubmit(): Promise<void> {
         const {username, password} = form.getValues();
         await login(username, password);   // Method automatically redirects to images page
     }

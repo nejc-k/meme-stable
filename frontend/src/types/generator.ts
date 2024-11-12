@@ -1,3 +1,6 @@
+/**
+ * @description TextBox type for usage in the image editor.
+ * */
 export interface TextBox {
     text: string;
     font: string;
@@ -13,6 +16,9 @@ export interface TextBox {
     }
 }
 
+/**
+ * @description Image type for usage in the image editor and personal image gallery.
+ * */
 export interface Image {
     _id: string;
     url: string;

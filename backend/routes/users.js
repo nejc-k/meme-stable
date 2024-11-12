@@ -1,11 +1,18 @@
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 const mongoose = require("mongoose");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 
-/* GET users listing. */
-router.get("/", async function (req, res, next) {
+/**
+ * @description GET request to retrieve a specific user based on the username provided by the user.
+ * 							The user must be authenticated in order to retrieve the user.
+ *
+ * @param {Request} req - Request object containing the username provided by the user.
+ * @param {Response} res - Response object containing the user.
+ * @returns {Response} - Response object containing the user.
+ */
+router.get("/", async function (req, res) {
 	const { username } = req.params;
 	const user = await User.findOne({ username: username });
 	console.log(user);
@@ -13,6 +20,15 @@ router.get("/", async function (req, res, next) {
 
 });
 
+/**
+ * @description POST request to create a new user based on the information provided by the user. The user must provide
+ * 							their email, username, name, lastname and password in order to create an account. The password is hashed
+ * 							using bcrypt before storing it in the database.
+ *
+ * @param {Request} req - Request object containing the user information.
+ * @param {Response} res - Response object containing the newly created user.
+ * @returns {Response} - Response object containing the newly created user.
+ */
 router.post("/", async (req, res, next) => {
 	try {
 		const user = await User.findOne({ username: req.body.username });

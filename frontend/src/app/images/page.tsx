@@ -12,7 +12,7 @@ export default function ImagesPage() {
 
     // Fetch images from the server at component mount
     useEffect(() => {
-        async function fetchUserImages() {
+        async function fetchUserImages(): Promise<void> {
             const response = await api.get('/images');
             if (response.status !== 200) {
                 console.error("Error fetching images");
@@ -28,8 +28,9 @@ export default function ImagesPage() {
     /**
      * @description Handles the download of the meme image
      * @param {React.MouseEvent<HTMLButtonElement>} e - Event
+     * @returns {void}
      * */
-    function handleDownload(e: React.MouseEvent<HTMLButtonElement>) {
+    function handleDownload(e: React.MouseEvent<HTMLButtonElement>): void {
         const imageElement = (e.target as HTMLElement).closest('div')?.previousElementSibling as HTMLImageElement;
         if (imageElement) {
             document.body.style.cursor = 'wait';
@@ -46,12 +47,12 @@ export default function ImagesPage() {
     }
 
     /**
-     * @description Redirects to the edit page with selected meme image
-     * @param {React.MouseEvent<HTMLButtonElement>} e - Event
-     * @param {string} imageId - Image ID
+     * @description Parses the image URL and redirects to the edit page
+     * @param {string} imageUrl - Image URL
+     * @returns {void}
      * */
-    function handleEdit(e: React.MouseEvent<HTMLButtonElement>, imageId: string) {
-        const imageElement = (e.target as HTMLElement).closest('div')?.previousElementSibling as HTMLImageElement;
+    function handleEdit(imageUrl: string): void {
+        const imageId = imageUrl.split("/").pop()!!.split(".")[0]
         redirect('/generator/edit/' + imageId);
     }
 
@@ -79,7 +80,7 @@ export default function ImagesPage() {
                                     <Button onClick={handleDownload} className="w-24 hidden transition-all">
                                         Download
                                     </Button>
-                                    <Button onClick={(e) => handleEdit(e, image.url.split("/").pop()!!.split(".")[0])}
+                                    <Button onClick={() => handleEdit(image.url)}
                                             className="w-24 bg-gray-700 hidden transition-all">
                                         Edit
                                     </Button>

@@ -1,21 +1,20 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var mongoose = require("mongoose");
-var cors = require("cors");
-var passport = require("passport");
-var session = require("express-session");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const passport = require("passport");
+const session = require("express-session");
 const dotenv = require("dotenv").config();
 require("./strategies/local-strategy.js");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var generatorRouter = require("./routes/generator");
-var imagesRouter = require("./routes/images");
+const usersRouter = require("./routes/users");
+const generatorRouter = require("./routes/generator");
+const imagesRouter = require("./routes/images");
 
-var app = express();
+const app = express();
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -91,13 +90,12 @@ function checkAuthenticated(req, res, next) {
 	req.isAuthenticated() ? next() : res.redirect("/login");
 }
 
-
 app.get("/", (req, res) => {
 	const { session } = res.locals;
 	res.render("index", { user: session?.user });
 });
 
-app.use("/", indexRouter);
+// Routes
 app.use("/api/users", usersRouter);
 app.use("/api/generator", generatorRouter);
 app.use("/api/images", imagesRouter);

@@ -1,9 +1,18 @@
 import axios from "axios";
 
+/**
+ * @description Axios instance with base URL set to the API base URL. Used for RESTful API requests.
+ * @example api.post("/generator") - creates POST request to the API endpoint /generator to start the generation process.
+ * */
 export const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL
 });
 
+/**
+ * @description Axios instance with base URL set to the images API base URL. Used to fetch images from the images API.
+ * @example imagesApi.get("/images") - fetches all images from the images API for the currently logged in user.
+ *
+ * */
 export const imagesApi = axios.create({
     baseURL: process.env.NEXT_PUBLIC_IMAGES_API_BASE_URL
 });

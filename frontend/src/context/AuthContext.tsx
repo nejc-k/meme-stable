@@ -27,18 +27,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 
     // Check authentication status (ping server to check if user is still authenticated)
     useEffect(() => {
-        async function checkAuthStatus() {
-            if (user) {
-                const response = await api.get('/auth/status');
-                if (response.status === 401) {
-                    console.warn("You have been logged out due to inactivity");
-                    clearStorage();
-                } else {
-                    setUser({...user, credits: response.data.credits});
-                }
-            }
-        }
-
         // Initial check on component mount
         checkAuthStatus();
 
@@ -79,6 +67,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
         setUser(null);
         sessionStorage.removeItem('auth-user');
         router.push('/');
+    }
+
+    /**
+     * @description Check if user is still authenticated. Most useful for checking if user is still logged in after a timeout
+     * @returns Promise<void>
+     * */
+    async function checkAuthStatus() {
+        if (user) {
+            const response = await api.get('/auth/status');
+            if (response.status === 401) {
+                console.warn("You have been logged out due to inactivity");
+                clearStorage();
+            } else {
+                setUser({...user, credits: response.data.credits});
+            }
+        }
     }
 
     /**
@@ -163,7 +167,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({children}
 }
 
 /**
- * @description Custom hook to use AuthContext
+ * @description Custom hook which enables the use of the AuthContext
  * @returns AuthContextType
  * */
 export const useAuth = () => {

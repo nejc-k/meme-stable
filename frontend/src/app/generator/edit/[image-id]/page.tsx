@@ -146,7 +146,10 @@ export default function GeneratorEditPage() {
     }
 
     /**
-     * @description Renders the canvas with the image and text boxes
+     * @description Renders the canvas with the image and text boxes. It also handles the red border around the selected
+     *              text box to visually indicate which text box ios currently selected. renderCanvas may cause image
+     *              flickering when dragging text boxes around as it also redraws the image. In order to eliminate or reduce
+     *              the flickering effect, background-image is used for canvas element.
      * @returns void
      * */
     function renderCanvas() {
@@ -225,18 +228,18 @@ export default function GeneratorEditPage() {
     }
 
     /**
-     * @description Handles the mouse down event on the text box
+     * @description Handles the mouse down event on the text box, sets the selected text box and enables dragging
      * @param {number} index - Index of the text box
-     * @param {React.MouseEvent<HTMLDivElement>} e - Mouse event
      * @returns void
      * */
-    function handleMouseDown(index: number, e: React.MouseEvent<HTMLDivElement>) {
+    function handleMouseDown(index: number) {
         setSelectedTextBox(index);
         setIsDragging(true);
     }
 
     /**
-     * @description Handles the mouse move event on the canvas
+     * @description Handles the mouse move event on the canvas, moves the selected text box around the canvas by updating
+     *              its location (x, y coordinates)
      * @param {MouseEvent} e - Mouse event
      * @returns void
      * */
@@ -264,7 +267,8 @@ export default function GeneratorEditPage() {
     }
 
     /**
-     * @description Handles the mouse up event on the canvas
+     * @description Handles the mouse up event on the canvas, disables dragging and resets the selected text box after a
+     *              small delay to prevent race conditions when using alignment tools (vertical and horizontal alignment)
      * @returns void
      * */
     function handleMouseUp() {
@@ -275,6 +279,9 @@ export default function GeneratorEditPage() {
     }
 
     /**
+     * @description Aligns the text horizontally based on the alignment parameter
+     * @param {CanvasTextAlign} align - Alignment parameter
+     * @returns void
      * */
     function alignTextHorizontally(align: CanvasTextAlign) {
         if (selectedTextBox === null) return;
@@ -299,6 +306,11 @@ export default function GeneratorEditPage() {
         renderCanvas();
     }
 
+    /**
+     * @description Aligns the text vertically based on the alignment parameter
+     * @param {CanvasTextAlign} align - Alignment parameter
+     * @returns void
+     * */
     function alignTextVertically(align: CanvasTextAlign) {
         if (selectedTextBox === null) return;
 
@@ -308,17 +320,15 @@ export default function GeneratorEditPage() {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Align selected text box
         const textBox = textBoxes[selectedTextBox];
         if (!textBox) return;
 
-        const textBoxHeight = textBox.fontSize;
         textBox.position.y = align === "center" ? (canvas.height - textBox.fontSize) / 2 : align === "end" ? canvas.height - textBox.whiteBoxPadding : textBox.fontSize;
         renderCanvas();
     }
 
     /**
-     * @description Downloads the meme image
+     * @description Creates anchor element to download the meme as a PNG image
      * @returns void
      * */
     function downloadMeme() {
@@ -485,7 +495,7 @@ export default function GeneratorEditPage() {
                             <li key={index}>
                                 <div
                                     className={`grid grid-cols-4 items-center gap-4 bg-gray-200 rounded-lg p-4 relative transition-all ${index === selectedTextBox ? 'bg-gray-700 text-white' : ''}`}
-                                    onClick={e => handleMouseDown(index, e)}>
+                                    onClick={() => handleMouseDown(index)}>
                                     <Button className="bg-red-400 w-fit absolute top-3 right-3"
                                             onClick={() => removeTextBox(index)}>
                                         <Trash2/>

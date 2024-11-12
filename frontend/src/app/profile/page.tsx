@@ -10,12 +10,18 @@ import React, {useState} from "react";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 
+/**
+ * @description Schema for form validation for user related data
+ * */
 const userDataSchema = z.object({
     username: z.string().min(3, {message: "Username must have at least 3 characters"}),
     "first-name": z.string().min(2, {message: "Name must have at least 2 characters"}),
     "last-name": z.string().min(2, {message: "Last name must have at least 2 characters"}),
 });
 
+/**
+ * @description Schema for form validation for password change
+ * */
 const userPasswordSchema = z.object({
     "current-password": z.string().min(8, {message: "Password must be at least 8 characters"}),
     "new-password": z.string().min(8, {message: "Password must be at least 8 characters"}),
@@ -49,7 +55,7 @@ export default function ProfilePage() {
      * @description Updates user data such as username, name and last name
      * @returns Promise<void>
      * */
-    async function updateUserData() {
+    async function updateUserData(): Promise<void> {
         if (!user) return;
 
         await updateAccount({
@@ -64,7 +70,7 @@ export default function ProfilePage() {
      * @description Updates user password after checking if new password and repeated password match
      * @returns Promise<void>
      * */
-    async function updateUserPassword() {
+    async function updateUserPassword(): Promise<void> {
         if (!user) return;
 
         const currentPassword: string = userPasswordForm.getValues('current-password');

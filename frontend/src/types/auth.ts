@@ -1,3 +1,6 @@
+/**
+ * @description Auth context type.
+ * */
 export interface AuthContextType {
     user: User | null;
     login: (email: string, password: string) => Promise<void>;
@@ -10,6 +13,9 @@ export interface AuthContextType {
     clearStorage: () => void;
 }
 
+/**
+ * @description User object type.
+ * */
 export interface User {
     _id: string;
     name: string;

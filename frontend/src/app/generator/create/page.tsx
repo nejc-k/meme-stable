@@ -1,6 +1,6 @@
 "use client";
 
-import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
 import {z} from "zod";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -31,11 +31,13 @@ export default function GeneratorCreatePage() {
         }
     });
 
+    /**
+     * @description Handle form submission for creating new image for meme
+     * @param values - Form values
+     * @returns {Promise<void>}
+     * */
     async function onSubmit(values: z.infer<typeof schema>) {
         if (!user) return;
-
-        console.log(values);
-        updateUserCredits(-1);
 
         const response = await api.post('/generator', {prompt: values["image-prompt"]});
         if (response.status !== 201) {
@@ -43,7 +45,7 @@ export default function GeneratorCreatePage() {
             return;
         }
 
-        console.dir(response);
+        updateUserCredits(-1);
         const imageId = response.data.imgUrl.split('/').pop().split('.')[0];
         redirect("/generator/edit/" + imageId);
     }

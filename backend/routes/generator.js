@@ -5,8 +5,15 @@ const User = require("../models/User");
 const Image = require("../models/Image");
 const { spawn } = require("child_process");
 
-
-router.post("/", async (req, res, next) => {
+/**
+ * @description POST request to generate an image based on the prompt provided by the user. The user must be authenticated
+ * 							in order to generate an image. If the user is an admin, they can generate images without any restrictions.
+ *
+ * @param {Request} req - Request object containing the prompt provided by the user.
+ * @param {Response} res - Response object containing the generated image URL.
+ * @returns {Response} - Response object containing the generated image URL.
+ * */
+router.post("/", async (req, res) => {
 	try {
 		console.log("User", req.user);
 		console.log("Cookies", req.cookies);
