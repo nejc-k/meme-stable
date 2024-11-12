@@ -1,20 +1,31 @@
-from PIL import Image, ImageDraw
+from PIL import ImageDraw
 import sys
 import uuid
+import torch
+import diffusers
+from diffusers import StableDiffusionPipeline
 
-def generate_image(text):
-    width, height = 200, 100
-    image = Image.new("RGB", (width, height), color="yellow")
+diffusers.logging.set_verbosity_error()
+
+model_path = "./meme_model"
+pipeline = StableDiffusionPipeline.from_pretrained(
+    model_path,
+    torch_dtype=torch.float32  # Use float32 initially for stability (change to float16 if needed)
+).to("cpu")
+
+def generate_image(text, user_id):
+    image = pipeline(text).images[0]
     draw = ImageDraw.Draw(image)
     draw.text((10, 40), text, fill="black")
 
     unique_filename = f"{uuid.uuid4()}.png"
-    temp_image_path = f"images/tmp/{unique_filename}"
+    temp_image_path = f"./public/images/{user_id}/{unique_filename}"
     
     image.save(temp_image_path)
     return temp_image_path
 
 if __name__ == "__main__":
     text = sys.argv[1] if len(sys.argv) > 1 else "Hello!"
-    image_path = generate_image(text)
+    user_id = sys.argv[2]
+    image_path = generate_image(text, user_id)
     print(image_path)  

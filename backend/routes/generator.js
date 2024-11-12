@@ -30,14 +30,15 @@ router.post("/", async (req, res) => {
 				return res.status(201).json({ imgUrl: image.imageUrl });
 			}
 
+			/*
 			const generatedImage = await Image.create({
 				userId: req.user.id,
 				imageUrl: `images/${req.user.id}/3e92de62-47cc-43c3-a773-9816f8355989.png`,
 			});
-			return res.status(201).json({ imgUrl: generatedImage.imageUrl });
+			*/
 
 			// TODO: Enable in production (when model is trained)
-			const pyProg = spawn("python3", ["python/generator.py", prompt]);
+			const pyProg = spawn("python3", ["python/generator.py", prompt, req.user.id]);
 			let imagePath = `${process.env.API_BASE_URI}:${process.env.PORT}/`;
 
 			pyProg.stdout.on("data", (data) => {
@@ -58,8 +59,7 @@ router.post("/", async (req, res) => {
 			});
 
 			pyProg.stderr.on("data", (data) => {
-				console.error(`Error: ${data}`);
-				res.status(500).json({ message: error.message });
+				console.log(`Error: ${data}`);
 				return;
 			});
 		} else {

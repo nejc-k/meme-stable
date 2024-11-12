@@ -3,3 +3,4 @@
 backend/.env*
 frontend/.env*
 backend/images/tmp/*
+*.DS_store

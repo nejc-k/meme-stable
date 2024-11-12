@@ -13,6 +13,13 @@ This is the backend application for the meme generator project. It is built usin
 
 ## Installation
 
+### Node.js
+
+Verify you have **Node v20.18.0** with:
+```
+node --version
+```
+
 To install the dependencies, run:
 
 ```bash
@@ -21,6 +28,51 @@ npm install
 
 After the installation, check installation logs for any errors or warnings. Then make sure that `node_modules` directory
 has been created.
+
+### python
+
+For this project to run correctly, python **3.10.15** needs to be used.
+
+Install it on your system, we recommend you use `miniconda`, `pyenv`, ...
+or similar tool to manage different python versions on your system.
+
+To verify you have correct version of python run:
+
+```
+python --version
+```
+<sub>or equivalent for your python version manager</sub>
+
+It should output `Python 3.10.15`
+
+#### create venv
+
+With the correct version of python, run:
+```
+python -m venv ./env
+```
+
+and activate it with:
+```
+source ./env/bin/activate
+```
+on Windows use:
+```
+./env/Scripts/activate.bat
+```
+
+#### Install python dependencies
+```
+pip install -r req.txt
+```
+
+### MongoDB
+
+In case you are not running a local instance of MongoDB, you can use provided `docker-compose.yml` file to build and run Docker container with MongoDB inside. IN such case run the command:
+
+```
+docker-compose up -d
+```
 
 After this all the dependencies have been installed successfully. Next step is to set up the environment variables.
 
@@ -71,19 +123,4 @@ To start the server, run one of the following commands:
 
 ```bash
 npm run start
-```
-
-The server will start on the port specified in the `.env` file.
-
-```bash
-npm run devStart
-```
-
-The server will start on the port specified in the `.env` file with nodemon in the background which will listen for
-changes in the code and perform an automatic restart to apply changes.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ```
