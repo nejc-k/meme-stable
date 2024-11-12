@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Application
 
-## Getting Started
+This is the frontend application for the meme generator project. It is built using React, TypeScript, and various other
+libraries.
 
-First, run the development server:
+## Table of Contents
+
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [Available Scripts](#available-scripts)
+- [Components](#components)
+- [Contexts](#contexts)
+- [Types](#types)
+- [Usage](#usage)
+
+## Installation
+
+To install the dependencies, run:
+
+```bash
+npm install
+```
+
+After the installation, check installation logs for any errors or warnings. Then make sure that `node_modules` directory
+has been created.
+
+After this all the dependencies have been installed successfully. Next step is to set up the environment variables.
+
+## Environment Variables
+
+The following environment variables are required:
+
+- **NEXT_PUBLIC_BACKEND_URL**: The base URL for the backend server.
+- **NEXT_PUBLIC_API_BASE_URL**: The base URL for the API endpoints.
+- **NEXT_PUBLIC_API_IMAGES_URL**: The base URL for the images inside public directory.
+
+These variables should be defined in a `.env` file in the root of the project and should not have trailing `'/'`
+included.
+
+Example:
+
+```env
+NEXT_PUBLIC_BACKEND_URL=http://localhost:5000
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api
+NEXT_PUBLIC_API_IMAGES_URL=http://localhost:5000/images
+```
+
+## Available Scripts
+
+In the project directory, you can run:
+
+- `npm run dev`: Runs the app in the development mode.
+- `npm run build`: Builds the app for production.
+- `npm run start`: Starts the app in production mode.
+
+## Components
+
+The components are divided into two main categories: UI components and page components. The UI components are
+reusable **Shad-cn UI** components and can be found in the `src/components/ui/ directory`. The page components are the
+located in `src/components` directory.
+
+## Contexts
+
+The contexts are used to manage the global state of the application. They are located in the `src/contexts/` directory.
+Main context is `AuthContext` which manages user state.
+
+## Types
+
+The types are used to define the types of the application. They are located in the `src/types/` directory. The types are
+
+## Usage
+
+To use the frontend application, run the one of the following commands:
+
+```bash
+npm run start
+```
+
+This will start the development server and open the application in your default web browser.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will start the development server and open the application in your default web browser while listening for changes
+in the code to perform **Hot-Reloading**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This will build the application for production.
 
-## Learn More
+## License
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
