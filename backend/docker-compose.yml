@@ -1,0 +1,20 @@
+version: '3.1'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: meme_stable_mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data:/data/db
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
