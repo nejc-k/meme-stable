@@ -66,6 +66,10 @@ on Windows use:
 pip install -r req.txt
 ```
 
+#### Custom stable diffusion model
+
+Put all files from [google drive folder](https://drive.google.com/drive/folders/113-5yBivNFYdn-lx2h640-UWgWRSd-D6?usp=sharing) into `./backend/meme_model`, so the python script can read the model and generate images.
+
 ### MongoDB
 
 In case you are not running a local instance of MongoDB, you can use provided `docker-compose.yml` file to build and run Docker container with MongoDB inside. IN such case run the command:
