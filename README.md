@@ -2,6 +2,7 @@
 
 ## Project purpose
 Project is designed to provide an easy and fast way to generate new memes with the help of ai.
+With this product memes are easy to make and don't require complex tools. Users can also costumize the kind of meme they want.
 The target group are young people that are familiar with memes and would like to create them.
 
 ## Project draft
