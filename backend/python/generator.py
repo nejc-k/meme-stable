@@ -5,8 +5,6 @@ import torch
 import diffusers
 from diffusers import StableDiffusionPipeline
 
-diffusers.logging.set_verbosity_error()
-
 model_path = "./meme_model"
 pipeline = StableDiffusionPipeline.from_pretrained(
     model_path,
@@ -22,7 +20,8 @@ def generate_image(text, user_id):
     temp_image_path = f"./public/images/{user_id}/{unique_filename}"
     
     image.save(temp_image_path)
-    return temp_image_path
+    image_path = temp_image_path[9::]
+    return image_path
 
 if __name__ == "__main__":
     text = sys.argv[1] if len(sys.argv) > 1 else "Hello!"

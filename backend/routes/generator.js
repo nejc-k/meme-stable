@@ -25,11 +25,6 @@ router.post("/", async (req, res) => {
 		const prompt = req.body.prompt;
 
 		if (req.user.isAdmin || req.user.credits > 0) {
-			const image = await Image.find({ userId: req.user.id });
-			if (image && image.length > 0) {
-				return res.status(201).json({ imgUrl: image.imageUrl });
-			}
-
 			/*
 			const generatedImage = await Image.create({
 				userId: req.user.id,
@@ -39,7 +34,8 @@ router.post("/", async (req, res) => {
 
 			// TODO: Enable in production (when model is trained)
 			const pyProg = spawn("python3", ["python/generator.py", prompt, req.user.id]);
-			let imagePath = `${process.env.API_BASE_URI}:${process.env.PORT}/`;
+			let imagePathBase = `${process.env.API_BASE_URI}:${process.env.PORT}`;
+			let imagePath = "";
 
 			pyProg.stdout.on("data", (data) => {
 				imagePath += data.toString().trim();
@@ -48,14 +44,17 @@ router.post("/", async (req, res) => {
 			pyProg.on("close", async (code) => {
 				if (code === 0 && imagePath) {
 					let user = await User.findById({ _id: req.user.id });
-					user.credits = user.credits - 1;
+					user.credits = user.credits + 1;
 					user.save();
-					res.status(201).json({ imgUrl: imagePath });
+					await Image.create({
+						userId: req.user.id,
+						url: imagePath,
+					});
+					res.status(201).json({ imgUrl: imagePathBase + imagePath });
 
 				} else {
 					res.status(500).json({ message: "Image generation failed" });
 				}
-
 			});
 
 			pyProg.stderr.on("data", (data) => {
