@@ -1,5 +1,9 @@
 # Meme generator 2000
 
+## Project purpose
+Project is designed to provide an easy and fast way to generate new memes with the help of ai.
+The target group are young people that are familiar with memes and would like to create them.
+
 ## Project draft
 - 3-4[^1] pages (landing, generator, editor, about)
 - landing page is there to look nice, has one big GENERATE button and sign up if we want it
